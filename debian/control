@@ -1,0 +1,17 @@
+Source: gfs2-utils
+Section: admin
+Priority: optional
+Maintainer: Proxmox Support Team <support@proxmox.com>
+Build-Depends: debhelper (>= 7.0.50~), autotools-dev
+Standards-Version: 3.8.4
+
+Package: gfs2-utils
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, psmisc, redhat-cluster-pve 
+Description:  Global file system 2 tools
+ The Global File System allows a cluster of machines to concurrently access
+ shared storage hardware like SANs or iSCSI and network block devices. GFS
+ can be deployed to build high-availability services without the single point
+ of failure of a file server.
+ .
+ This package contains tools for creating and managing global file systems.
