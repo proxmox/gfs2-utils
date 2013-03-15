@@ -1,4 +1,4 @@
-RELEASE=2.0
+RELEASE=3.0
 
 PACKAGE=gfs2-utils
 PKGREL=1
@@ -18,7 +18,7 @@ ${DEB} deb: ${GFSUSRC}
 	cp -av debian ${GFSUDIR}/debian
 	cat ${GFSUDIR}/doc/COPYRIGHT >>${GFSUDIR}/debian/copyright
 	cd ${GFSUDIR}; dpkg-buildpackage -rfakeroot -b -us -uc
-	lintian ${DEB}
+	lintian -X copyright-file ${DEB}
 
 .PHONY: upload
 upload: ${DEB}
