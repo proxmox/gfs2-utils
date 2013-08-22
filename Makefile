@@ -6,6 +6,7 @@ GFSUVER=3.1.3
 GFSUDIR=gfs2-utils
 GFSUSRC=gfs2-utils-${GFSUVER}.tar.gz
 
+GITVERSION:=$(shell cat .git/refs/heads/master)
 
 DEB=${PACKAGE}_${GFSUVER}-${PKGREL}_amd64.deb
 
@@ -17,6 +18,7 @@ ${DEB} deb: ${GFSUSRC}
 	cd ${GFSUDIR}; ./autogen.sh
 	cp -av debian ${GFSUDIR}/debian
 	cat ${GFSUDIR}/doc/COPYRIGHT >>${GFSUDIR}/debian/copyright
+	echo "git clone git://git.proxmox.com/git/gfs2-utils.git\\ngit checkout ${GITVERSION}" > ${GFSUDIR}/debian/SOURCE
 	cd ${GFSUDIR}; dpkg-buildpackage -rfakeroot -b -us -uc
 	lintian -X copyright-file ${DEB}
 
