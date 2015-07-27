@@ -1,0 +1,89 @@
+From 93dce585f94c6f3a3d8653762fab1f54d1809fca Mon Sep 17 00:00:00 2001
+From: Thomas Lamprecht <t.lamprecht@proxmox.com>
+Date: Thu, 23 Jul 2015 16:37:15 +0200
+Subject: [PATCH] Migrating from cman to corosync tools
+
+Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
+---
+ gfs2/init.d/gfs2              |  6 +++---
+ gfs2/scripts/gfs2_lockcapture | 27 ++-------------------------
+ 2 files changed, 5 insertions(+), 28 deletions(-)
+ mode change 100644 => 100755 gfs2/init.d/gfs2
+ mode change 100644 => 100755 gfs2/scripts/gfs2_lockcapture
+
+diff --git a/gfs2/init.d/gfs2 b/gfs2/init.d/gfs2
+old mode 100644
+new mode 100755
+index 467f37b..dd9ae2a
+--- a/gfs2/init.d/gfs2
++++ b/gfs2/init.d/gfs2
+@@ -7,8 +7,8 @@
+ 
+ ### BEGIN INIT INFO
+ # Provides:		gfs2
+-# Required-Start:	$network cman gfs_controld
+-# Required-Stop:	$network cman gfs_controld
++# Required-Start:	$network pve-cluster
++# Required-Stop:	$network pve-cluster
+ # Default-Start:
+ # Default-Stop:
+ # Short-Description:	mount/unmount gfs2 filesystems configured in /etc/fstab
+@@ -72,7 +72,7 @@ GFS2MTAB=$(LC_ALL=C awk '!/^#/ && $3 == "gfs2" && $2 != "/" { print $2 }' /proc/
+ 
+ if [ -z "$GFS2FSTAB" ]; then
+ 	echo "GFS2: no entries found in /etc/fstab"
+-	exit 6
++	exit 0 # doesn't have to be an error
+ fi
+ 
+ # See how we were called.
+diff --git a/gfs2/scripts/gfs2_lockcapture b/gfs2/scripts/gfs2_lockcapture
+old mode 100644
+new mode 100755
+index 8839818..222693d
+--- a/gfs2/scripts/gfs2_lockcapture
++++ b/gfs2/scripts/gfs2_lockcapture
+@@ -595,20 +595,7 @@ def getClusterNode(listOfGFS2Names):
+     clusterName = ""
+     clusternodeName = ""
+     clusternodeID = ""
+-    if (runCommand("which", ["cman_tool"])):
+-        stdout = runCommandOutput("cman_tool", ["status"])
+-        if (not stdout == None):
+-            stdoutSplit = stdout.split("\n")
+-            clusterName = ""
+-            clusternodeName = ""
+-            for line in stdoutSplit:
+-                if (line.startswith("Cluster Name:")):
+-                    clusterName = line.split("Cluster Name:")[1].strip().rstrip()
+-                if (line.startswith("Node name: ")):
+-                    clusternodeName = line.split("Node name:")[1].strip().rstrip()
+-                if (line.startswith("Node ID: ")):
+-                    clusternodeID = line.split("Node ID: ")[1].strip().rstrip()
+-    elif (runCommand("which", ["corosync-cmapctl"])):
++    if (runCommand("which", ["corosync-cmapctl"])):
+         # Another way to get the local cluster node is: $ crm_node -i; crm_node -l
+         # Get the name of the cluster.
+         stdout = runCommandOutput("corosync-cmapctl", ["-g", "totem.cluster_name"])
+@@ -865,17 +852,7 @@ def gatherOptionalDiagnosticData(pathToDSTDir):
+         logging.getLogger(MAIN_LOGGER_NAME).error(message)
+ 
+     # Write the status of all the nodes in the cluster out.
+-    if (runCommand("which", ["cman_tool"])):
+-        command = "cman_tool"
+-        pathToCommandOutput = os.path.join(pathToDSTDir, "cman_tool_status")
+-        try:
+-            fout = open(pathToCommandOutput, "w")
+-            runCommand(command, ["status"], standardOut=fout)
+-            fout.close()
+-        except IOError:
+-            message = "There was an error the command output for %s to the file %s." %(command, pathToCommandOutput)
+-            logging.getLogger(MAIN_LOGGER_NAME).error(message)
+-    elif (runCommand("which", ["corosync-cmapctl"])):
++    if (runCommand("which", ["corosync-quorumtool"])):
+         command = "corosync-quorumtool"
+         pathToCommandOutput = os.path.join(pathToDSTDir, "corosync-quorumtool_l")
+         try:
+-- 
+2.1.4
+
