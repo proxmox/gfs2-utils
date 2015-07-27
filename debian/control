@@ -7,7 +7,7 @@ Standards-Version: 3.8.4
 
 Package: gfs2-utils
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, psmisc, redhat-cluster-pve 
+Depends: ${shlibs:Depends}, ${misc:Depends}, psmisc, python, corosync
 Description:  Global file system 2 tools
  The Global File System allows a cluster of machines to concurrently access
  shared storage hardware like SANs or iSCSI and network block devices. GFS

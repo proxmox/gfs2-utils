@@ -1,9 +1,9 @@
-RELEASE=3.0
+RELEASE=4.0
 
 PACKAGE=gfs2-utils
 PKGREL=1
-GFSUVER=3.1.3
-GFSUDIR=gfs2-utils
+GFSUVER=3.1.8
+GFSUDIR=gfs2-utils-${GFSUVER}
 GFSUSRC=gfs2-utils-${GFSUVER}.tar.gz
 
 GITVERSION:=$(shell cat .git/refs/heads/master)
